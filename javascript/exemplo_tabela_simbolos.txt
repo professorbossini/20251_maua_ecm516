@@ -1,0 +1,3 @@
+//tabela de símbolos
+idade = undefined  18
+nome(if) = undefined
