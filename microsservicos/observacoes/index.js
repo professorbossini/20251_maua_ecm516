@@ -18,11 +18,26 @@ app.use(express.json())
 }
 */
 const baseObservacoes = {}
+//faça esse mapa de funções para que haja o tratamento do evento do tipo ObservacaoClassificada. Esse tipo de evento deve ser traduzido para outro do tipo ObservacaoAtualizada.
+//não se esqueça de atualizar a base local
+const funcoes = {
+  ObservacaoClassificada: async function(observacao){
+    const observacoes = baseObservacoes[observacao.idLembrete]
+    const obsParaAtualizar = observacoes.find(o => o.id === observacao.id)
+    obsParaAtualizar.status = observacao.status
+    await axios.post('http://localhost:10000/eventos', {
+      tipo: 'ObservacaoAtualizada',
+      dados: observacao
+    })
+  }
+}
+
 //GET /lembretes/1/observacoes
 app.get('/lembretes/:idLembrete/observacoes', function(req, res){
   const idLembrete = req.params.idLembrete
   res.json(baseObservacoes[idLembrete] || [])
 })
+
 
 //POST /lembretes/1/observacoes
 app.post('/lembretes/:idLembrete/observacoes', async (req, res) => {
@@ -32,7 +47,8 @@ app.post('/lembretes/:idLembrete/observacoes', async (req, res) => {
   const observacao = {
     id: idObservacao,
     texto: texto,
-    idLembrete: idLembrete
+    idLembrete: idLembrete,
+    status: 'aguardando'
   }
   const observacoes = baseObservacoes[idLembrete] || []
   observacoes.push(observacao)
@@ -44,10 +60,15 @@ app.post('/lembretes/:idLembrete/observacoes', async (req, res) => {
   res.status(201).json(observacoes)
 })
 
-app.post('/eventos', (req, res) => {
-  const evento = req.body
-  console.log(evento)
-  res.end()
+app.post('/eventos', async (req, res) => {
+  try{
+    const evento = req.body
+    console.log(evento)
+    funcoes[evento.tipo](evento.dados)
+  }
+  finally{
+    res.end()
+  }
 })
 
 
