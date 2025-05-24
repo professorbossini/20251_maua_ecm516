@@ -30,6 +30,9 @@ app.post('/eventos', async function(req, res){
     console.log(evento)
     await funcoes[evento.tipo](evento.dados)
   }
+  catch(e){
+    console.log(e)
+  }
   finally{
     res.end()
   }

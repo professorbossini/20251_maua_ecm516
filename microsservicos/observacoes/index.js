@@ -64,7 +64,10 @@ app.post('/eventos', async (req, res) => {
   try{
     const evento = req.body
     console.log(evento)
-    funcoes[evento.tipo](evento.dados)
+    await funcoes[evento.tipo](evento.dados)
+  }
+  catch(e){
+    console.log(e)
   }
   finally{
     res.end()
