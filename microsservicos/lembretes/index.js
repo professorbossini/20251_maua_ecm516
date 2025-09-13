@@ -29,7 +29,7 @@ app.post('/lembretes', (req, res) => {
   const lembrete = { id, texto }
   baseLembretes[id] = lembrete
   id++
-  axios.post('http://localhost:10000/eventos', {
+  axios.post('http://ecm516-barramento-de-eventos-service:10000/eventos', {
     tipo: 'LembreteCriado',
     dados: lembrete
   })

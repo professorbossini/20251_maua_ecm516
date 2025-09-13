@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ecm516-lembretes-deployment
+  name: ecm516-barramento-de-eventos-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: lembretes
+      app: barramento-de-eventos
   template:
     metadata:
       labels:
-        app: lembretes
+        app: barramento-de-eventos
     spec:
       containers:
-        - name: lembretes
-          image: rodbossini/ecm516-lembretes
+        - name: barramento-de-eventos
+          image: rodbossini/ecm516-barramento-de-eventos
           resources:
             limits:
               memory: 256Mi
@@ -26,13 +26,13 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ecm516-lembretes-clusterip-service
+  name: ecm516-barramento-de-eventos-service
 spec:
   selector:
-    app: lembretes
+    app: barramento-de-eventos
+  type: ClusterIP
   ports:
-    - name: lembretes
+    - name: barramento-de-eventos
       protocol: TCP
-      port: 4000
-      targetPort: 4000
-
+      port: 10000
+      targetPort: 10000

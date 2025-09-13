@@ -11,28 +11,28 @@ app.post('/eventos', async (req, res) => {
   console.log(evento)
   eventos.push(evento)
   try{
-    await axios.post('http://localhost:4000/eventos', evento)
+    await axios.post('http://ecm516-lembretes-clusterip-service:4000/eventos', evento)
   }
   catch(e){
     console.log(e)
   }
-  try {
-    await axios.post('http://localhost:5000/eventos', evento)
-  } catch (e) {
-    console.log(e)
-  }
-  try{
-    await axios.post('http://localhost:6000/eventos', evento)
-  }
-  catch(e){
-    console.log(e)
-  }
-  try{
-    await axios.post('http://localhost:7000/eventos', evento)
-  }
-  catch(e){
-    console.log(e)
-  }
+  // try {
+  //   await axios.post('http://localhost:5000/eventos', evento)
+  // } catch (e) {
+  //   console.log(e)
+  // }
+  // try{
+  //   await axios.post('http://localhost:6000/eventos', evento)
+  // }
+  // catch(e){
+  //   console.log(e)
+  // }
+  // try{
+  //   await axios.post('http://localhost:7000/eventos', evento)
+  // }
+  // catch(e){
+  //   console.log(e)
+  // }
   res.end()
 })
 
