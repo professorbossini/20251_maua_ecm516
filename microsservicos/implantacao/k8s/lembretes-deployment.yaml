@@ -15,6 +15,7 @@ spec:
       containers:
         - name: lembretes
           image: rodbossini/ecm516-lembretes
+          imagePullPolicy: Always
           resources:
             limits:
               memory: 256Mi

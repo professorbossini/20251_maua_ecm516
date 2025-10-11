@@ -54,6 +54,7 @@ const port = 4000
 app.listen(port, () => {
   console.log('Nova versão')
   console.log('Agora usando o Docker Hub')
+  console.log('Versão aula 20/09')
   console.log(`Lembretes. Porta ${port}.`)
 })
 
