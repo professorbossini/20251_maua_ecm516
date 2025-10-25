@@ -17,6 +17,7 @@ public class EleicaoDeLider {
         var eleicaoDeLider = new EleicaoDeLider();
         eleicaoDeLider.conectar();
         eleicaoDeLider.executar();
+        eleicaoDeLider.fechar();
         //Thread.sleep( 16000 );
     }
 
@@ -26,15 +27,30 @@ public class EleicaoDeLider {
             TIMEOUT,
 //            expressão lambda, Java 8+
             (event) -> {
-                System.out.printf("Evento aconteceu na thread: %s\n", Thread.currentThread().getName());
-                System.out.println(event.getType());
-                System.out.println(event.getState());
+                if(event.getType() == Watcher.Event.EventType.None){
+                    if(event.getState() == Watcher.Event.KeeperState.SyncConnected){
+                        System.out.println("Conectou");
+                        System.out.printf("Evento aconteceu na thread: %s\n", Thread.currentThread().getName());
+                    }
+                    else if(event.getState() == Watcher.Event.KeeperState.Disconnected){
+                        synchronized (zooKeeper){
+                            System.out.println("Desconectado");
+                            System.out.printf("Evento aconteceu na thread: %s\n", Thread.currentThread().getName());
+                            zooKeeper.notify();
+                        }
+                    }
+                }
             }
         );
     }
     public void executar() throws Exception{
         synchronized (zooKeeper){
             zooKeeper.wait();
+            System.out.println("Depois do wait, thread notificada...");
         }
+    }
+
+    public void fechar() throws Exception{
+        zooKeeper.close();
     }
 }
