@@ -1,18 +1,61 @@
 package br.maua;
 
 import org.apache.zookeeper.*;
+import org.apache.zookeeper.data.Stat;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
 public class EleicaoDeLider {
+    private static final String ZNODE_TESTE_WATCHER = "/teste_watch";
     private static final String HOST = "10.2.131.164";
     private static final String PORTA = "2181";
     private static final int TIMEOUT = 5000;
     private static final String NAMESPACE_ELEICAO = "/eleicao";;
     private String nomeDoZNodeDesseProcesso;
     private ZooKeeper zooKeeper;
+
+//    private class TesteWatcher implements Watcher {
+//        @Override
+//        public void process(WatchedEvent event) {
+//
+//        }
+//    }
+
+    public void registrarWatcher(){
+        try{
+            //Watcher watcher = new TesteWatcher();
+            Watcher watcher = (event) -> {
+                //NodeCreated
+                //NodeDeleted
+                System.out.println(event);
+                switch(event.getType()){
+                    case NodeCreated -> System.out.println("ZNode criado");
+                    case NodeDeleted -> System.out.println("ZNode deletado");
+                    case NodeDataChanged -> System.out.println("Dados do ZNode alterados");
+                    case NodeChildrenChanged -> System.out.println("Evento envolvendo filhos");
+                }
+                registrarWatcher();
+            };
+            Stat stat = zooKeeper.exists(ZNODE_TESTE_WATCHER, watcher);
+            //se o ZNode existe
+            if (stat != null){
+                byte [] bytes =
+                    zooKeeper.getData(ZNODE_TESTE_WATCHER, watcher, stat);
+                var dados = new String(bytes);
+                System.out.println("Dados: " + dados);
+                List<String> filhos = zooKeeper.getChildren(ZNODE_TESTE_WATCHER, watcher);
+                System.out.println("Filhos: " + filhos);
+            }
+        }
+        catch(KeeperException | InterruptedException e){
+            e.printStackTrace();
+        }
+
+    }
+
+
     public static void main( String[] args ) throws Exception {
         System.out.printf( "Método main executando na thread: %s\n", Thread.currentThread().getName() );
         //operador de inferência de tipo: Java 10+
@@ -20,6 +63,7 @@ public class EleicaoDeLider {
         eleicaoDeLider.conectar();
         eleicaoDeLider.realizarCandidatura();
         eleicaoDeLider.elegerOLider();
+        eleicaoDeLider.registrarWatcher();
         eleicaoDeLider.executar();
         eleicaoDeLider.fechar();
         //Thread.sleep( 16000 );
